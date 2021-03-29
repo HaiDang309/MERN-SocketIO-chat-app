@@ -1,21 +1,16 @@
 import React from "react";
 
-import { Space, Avatar, Button, Typography } from "antd";
+import { Space, Avatar, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-import { useDispatch } from "react-redux";
-
 const UploadAvatar = React.memo((props) => {
+    const { currentAvatar } = props;
     const [avatar, setAvatar] = React.useState("");
-    const dispatch = useDispatch();
     const loadImg = (event) => {
         if (event.target.files && event.target.files[0]) {
             var reader = new FileReader();
             reader.onload = function () {
-                dispatch({
-                    type: "GET_URL_OF_AVATAR",
-                    payload: { avatar: reader.result }
-                });
+                window.sessionStorage.setItem('avatar', reader.result);
                 setAvatar(reader.result);
             };
         }
@@ -37,7 +32,7 @@ const UploadAvatar = React.memo((props) => {
                             cursor: "pointer"
                         }}
                         icon={<PlusOutlined />}
-                        src={avatar}
+                        src={avatar || currentAvatar}
                         alt=""
                         size={38}
                     />

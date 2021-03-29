@@ -36,7 +36,7 @@ const Contact = React.memo(props => {
                     </Space>
                 </Space>
 
-                <Badge status="success" />
+                <Badge status={window.sessionStorage.getItem('isOnline') ? 'success' : "default"} />
             </div>
         </NavLink>
     );

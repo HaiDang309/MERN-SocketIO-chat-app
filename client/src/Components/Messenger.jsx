@@ -10,10 +10,11 @@ import io from "socket.io-client";
 
 const Messenger = React.memo(props => {
     const { id } = useParams();
-    const [yourID, setYourID] = React.useState();
     const [messages, setMessages] = React.useState([]);
     const [message, setMessage] = React.useState("");
     const socketRef = React.useRef();
+    const sender = window.sessionStorage.getItem('email')
+    const [recipient, setRecipient] = React.useState('');
     let ENDPOINT = "localhost:8080";
     const handleChangeMessage = (e) => {
       setMessage(e.target.value);
@@ -26,37 +27,40 @@ const Messenger = React.memo(props => {
             })
             .then((res) => {
                 res.json()
-                    .then((user) => setUser(user.user))
+                    .then((user) => {
+                        setUser(user.user)
+                        setRecipient(user.user.email);
+                    })
                     .catch((err) => console.log(err));
             })
             .catch((err) => console.log(err));
     }, [id]);
 
-    const receivedMessage = (message) => {
-        setMessages((oldMsgs) => [...oldMsgs, message]);
-    }
-
     React.useEffect(() => {
         socketRef.current = io.connect(ENDPOINT);
 
-        socketRef.current.on("your id", (id) => {
-            setYourID(id);
-        });
+        socketRef.current.on('private message', data => {
+            setMessages([...messages, data]);
+        })
+        socketRef.current.emit('join', window.sessionStorage.getItem('email'));
+    }, [ENDPOINT, messages]);
 
-        socketRef.current.on("message", (message) => {
-            console.log("here");
-            receivedMessage(message);
-        });
-    }, [ENDPOINT]);
+    React.useEffect(() => {
+        const messageEnd = document.querySelector("#messageEnd");
+        messageEnd.scrollIntoView()
+    });
 
     const handleSendMessage = (e) => {
         e.preventDefault();
-        const messageObject = {
-            body: message,
-            id: yourID
-        };
-        setMessage("");
-        socketRef.current.emit("send message", messageObject); 
+        if(!message) {
+            return;
+        }
+        socketRef.current.emit('send message', {
+            sender,
+            recipient,
+            message
+        })
+        setMessage('')
     };
     return (
         <Card
@@ -148,7 +152,8 @@ const Messenger = React.memo(props => {
                     />
                 </Space>
             </div>
-            <Message messages={messages} yourID={yourID} avatar={user.avatar} />
+            <Message messages={messages} avatar={user.avatar} />
+            <div id="messageEnd"></div>
         </Card>
     );
 })

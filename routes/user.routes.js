@@ -8,6 +8,8 @@ router.get("/", userController.getAllUser);
 
 router.get("/message/:id", userController.getUserById);
 
+router.put("/profile", userController.updateUser);
+
 router.post("/sign-in", authController.signIn);
 
 router.post('/sign-up', authController.signUp);

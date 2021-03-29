@@ -21,7 +21,7 @@ const Register = React.memo((props) => {
     window
         .fetch("http://localhost:8080/sign-up", {
             method: "POST",
-            body: JSON.stringify({ email, username, password, avatar, messages: [] }),
+            body: JSON.stringify({ email, username, password, avatar, isOnline: false}),
             headers: {
                 "Content-Type": "application/json"
             }

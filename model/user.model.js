@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isOnline: {
+    type: Boolean,
+    default: false
+  }
 });
 
 userSchema.pre("save", async function (next) {

@@ -5,6 +5,7 @@ import { Empty, Space } from 'antd';
 import Contact from './Contact'
 
 const ContactContainer = React.memo(props => {
+    const { search } = props;
     const [user, setUser] = React.useState([]);
     React.useEffect(() => {
         window
@@ -28,7 +29,7 @@ const ContactContainer = React.memo(props => {
     return (
         <Space direction="vertical">
             {
-                !user ? <Empty description="No users are available!"/> : user.map(item => {
+                !user ? <Empty description="No users are available!"/> : user.filter(item => item.username.toLowerCase().includes(search.toLowerCase())).map(item => {
                     return (<Contact username={item.username} avatar={item.avatar} id={item._id} key={item._id}/>)
                 })
             }

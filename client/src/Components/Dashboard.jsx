@@ -4,12 +4,15 @@ import { Card, Avatar, Typography, Space, Button, Input, } from "antd";
 
 import ContactContainer from "./ContactContainer";
 
+import { NavLink } from 'react-router-dom'
+
 const Dashboard = React.memo((props) => {
   const handleLogout = () => {
     window.sessionStorage.clear();
     window.location.href = '/sign-in'
   }
-  const [user, setUser] = React.useState({})
+  const [user, setUser] = React.useState({});
+  const [search, setSearch] = React.useState('')
   React.useEffect(() => {
     window
         .fetch("http://localhost:8080/", {
@@ -41,8 +44,9 @@ const Dashboard = React.memo((props) => {
                       alignItems: "center"
                   }}
               >
-                  <Space align="center">
-                      <Avatar src={user.avatar} alt="" size={40} />
+                  <NavLink to="/profile">
+                    <Space align="center">
+                      <Avatar src={window.sessionStorage.getItem('avatar')} alt="" size={40} />
                       <Space align="start" size={-4} direction="vertical">
                           <Typography.Text strong>
                               {user.username}
@@ -54,6 +58,7 @@ const Dashboard = React.memo((props) => {
                           </Typography.Text>
                       </Space>
                   </Space>
+                  </NavLink>
 
                   <Button danger onClick={handleLogout}>
                       Log out
@@ -61,9 +66,9 @@ const Dashboard = React.memo((props) => {
               </div>
           }
       >
-          <Input.Search placeholder="Select an user to start chat" />
+          <Input.Search value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Select an user to start chat" />
 
-          <ContactContainer />
+          <ContactContainer search={search}/>
       </Card>
   );
 });

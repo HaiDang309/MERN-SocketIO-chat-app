@@ -29,12 +29,19 @@ const io = require("socket.io")(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  socket.emit("your id", socket.id);
+const users = [];
 
-  socket.on("send message", (body) => {
-    io.emit("message", body);
-  });
+io.on("connection", (socket) => {
+    socket.on('join', email => {
+        users[email] = socket.id
+    })
+
+    socket.on('send message', data => {
+      const socketIDRecipient = users[data.recipient];
+      const socketIDSender = users[data.sender];
+
+      io.to(socketIDRecipient).to(socketIDSender).emit("private message", data);
+    })
 });
 /**
  * Listen on provided port, on all network interfaces.

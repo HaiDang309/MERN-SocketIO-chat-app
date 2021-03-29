@@ -13,3 +13,24 @@ module.exports.getUserById = async (req, res) => {
     res.status(200).json({ user });
   }
 };
+
+module.exports.updateUser = async (req, res) => {
+  try {
+    await UserModel.findOneAndUpdate(
+      { _id: req.body.uid },
+      {
+        username: req.body.username,
+      },
+      {
+        new: true,
+      },
+      (err, docs) => {
+        if(!err) return res.json({updatedUser: docs})
+        if(err) return res.status(500).json({message: err});
+      }
+    );
+  } catch(err) {
+    return res.status(500).json({message: err});
+  }
+
+};

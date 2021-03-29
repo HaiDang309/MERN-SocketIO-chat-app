@@ -23,6 +23,11 @@ const Login = React.memo(props => {
                   res.json().then(({token, user}) => {
                     if (token) {
                         message.success("Successfully Signed In!");
+                        window.sessionStorage.setItem("username", user.username);
+                        window.sessionStorage.setItem(
+                            "avatar",
+                            user.avatar
+                        );
                         window.sessionStorage.setItem("email", email);
                         window.sessionStorage.setItem("uid", user._id);
                         window.sessionStorage.setItem("isAuth", true);
